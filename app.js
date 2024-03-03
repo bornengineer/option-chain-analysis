@@ -20,8 +20,23 @@ app.get("/", (req, res) => res.redirect("/index.html"));
 
 app.get("/chain", async (req, res) => {
   try {
-    let resp = await nse.getOptionChain("NIFTY");
-    console.log("resp :>> ", resp);
+    const indexName = req.query.index;
+    const symbolName = req.query.symbol;
+
+    let resp = await nse.getOptionChain(
+      indexName ?? symbolName,
+      indexName ? "index" : "symbol"
+    );
+    res.send(resp);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+app.get("/symbols", async (req, res) => {
+  try {
+    let resp = await nse.getSymbols();
+    console.log("resp3 :>> ", resp);
     res.send(resp);
   } catch (err) {
     res.status(500).send(err);
